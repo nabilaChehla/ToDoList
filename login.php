@@ -10,6 +10,7 @@
 
 <?php
 
+        session_start();
         $msg1 = "";
         $msg2 = "";
 
