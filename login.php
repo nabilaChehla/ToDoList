@@ -66,7 +66,6 @@
                 //Username does not exit
                 $msg1 = "Incorrect Username";
                 $connect->close();
-                exit();
             }
         }
     ?>
