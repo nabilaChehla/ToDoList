@@ -54,7 +54,8 @@
                     $_SESSION['userid'] = $row["id"];
                     $_SESSION['username'] = $username;
                     $connect->close();
-                    header("Location: todo.php");
+                    header("Location: index.php");
+
                 }else{
                     //incorrect password
                     //password incorrect

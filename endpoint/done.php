@@ -1,16 +1,24 @@
 <?php
+session_start();
 
 if(isset($_POST['id'])){
+    // Check if user is logged in
+    if (!isset($_SESSION['userid'])) {
+        echo 'error';
+        exit();
+    }
+    echo "donnnnnnnnnnnnnnnnnne"
     require '../conn/conn.php';
 
     $id = $_POST['id'];
+    $user_id = $_SESSION['userid'];
 
     if(empty($id)){
        echo 'error';
        exit();
-    }else {
-        $stmt = $conn->prepare("SELECT id, checked FROM todos WHERE id=?");
-        $stmt->bind_param("i", $id);
+    } else {
+        $stmt = $conn->prepare("SELECT todos.id, todos.checked FROM todos INNER JOIN user_task ON todos.id = user_task.task_id WHERE todos.id=? AND user_task.user_id=?");
+        $stmt->bind_param("ii", $id, $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -39,7 +47,8 @@ if(isset($_POST['id'])){
         $conn->close();
         exit();
     }
-}else {
-    header("Location: ../index.php?mess=error");
+} else {
+    echo "error";
     exit();
 }
+?>

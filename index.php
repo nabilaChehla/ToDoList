@@ -1,7 +1,20 @@
 <?php
-require 'conn/conn.php';
 
-$todos = $conn->query("SELECT * FROM todos ORDER BY id DESC");
+
+require 'conn/conn.php';
+session_start() or trigger_error("", E_USER_ERROR);
+
+// Check if user is logged in
+if (!isset($_SESSION['userid'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: login.php");
+    exit();
+}
+
+// Fetch only the tasks associated with the currently logged-in user
+$user_id = $_SESSION['userid'];
+$todos = $conn->query("SELECT todos.* FROM todos INNER JOIN user_task ON todos.id = user_task.task_id WHERE user_task.user_id = $user_id ORDER BY todos.id DESC");
+
 
 ?>
 
