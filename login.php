@@ -47,7 +47,6 @@
                 //Username already exists check if password is correct
                 $row = $res->fetch_assoc();
                 
-                echo "username ". $row["username"] ." passworddb ". $row["password"]." password ".md5($password);
                 //credentials correct: redirect to homepage
                 if( $row["password"] == md5($password) ){
                     echo "correct password";
