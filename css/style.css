@@ -1,0 +1,92 @@
+body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Basic styling */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .main-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-section {
+    margin-bottom: 20px;
+  }
+  
+  .add-section input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .add-section button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .add-section button span {
+    font-size: 20px;
+  }
+  
+  .show-todo-section {
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .list-group-item {
+    position: relative;
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+  }
+  
+  .list-group-item h2 {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 18px;
+  }
+  
+  .list-group-item h2.checked {
+    text-decoration: line-through;
+    color: #999;
+  }
+  
+  .check-box {
+    margin-right: 10px;
+  }
+  
+  .remove-to-do {
+    position: absolute;
+    right: 5px;
+    top: 20%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #ff6666;
+  }
+  
+  .empty {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+  }
+  
+
+  
