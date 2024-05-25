@@ -3,7 +3,7 @@
 
 require 'conn/conn.php';
 session_start() or trigger_error("", E_USER_ERROR);
-
+echo "<h1> Welcome " .$_SESSION["username"] . "</h1>";
 // Check if user is logged in
 if (!isset($_SESSION['userid'])) {
     // Redirect to login page or handle unauthorized access
@@ -82,14 +82,16 @@ $todos = $conn->query("SELECT todos.* FROM todos INNER JOIN user_task ON todos.i
                     }
                 });
             });
-
             $(".check-box").click(function(){
+
                 const id = $(this).attr('data-todo-id');
                 const h2 = $(this).next();
 
                 $.post('endpoint/done.php', { id: id }, function(data){
                     if (data !== 'error') {
                         h2.toggleClass('checked', data === '0');
+                        console.log("hiiii"); 
+
                     }
                 });
             });

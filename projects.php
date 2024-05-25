@@ -5,7 +5,7 @@ require './conn/conn.php';
 
 // Start the session
 session_start();
-
+echo "<h1> Welcome " .$_SESSION["username"] . "</h1>";
 // Check if user is logged in
 if (!isset($_SESSION['userid'])) {
     // Redirect to login page or handle unauthorized access
