@@ -13,8 +13,16 @@ if (!isset($_SESSION['userid'])) {
     exit();
 }
 
+// Initialize variables
+$project_name = "";
+$message = "";
+$task_title = "";
+$task_message = "";
+$task_update_message = "";
 
-// If form is submitted
+
+
+// If project creation form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_project'])) {
     // Get the user ID from the session
     $manager_id = $_SESSION['userid'];
@@ -37,9 +45,116 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_project'])) {
     $stmt->close();
 }
 
-// Retrieve all projects created by the user
-$manager_id = $_SESSION['userid'];
-$result = $conn->query("SELECT PROJECT_NAME FROM PROJECT WHERE MANAGER_ID = $manager_id");
+// If task creation form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_task'])) {
+    // Get the user ID from the session
+    $manager_id = $_SESSION['userid'];
+
+    // Get the task details from the form
+    $task_title = $_POST['task_title'];
+    $project_id = $_POST['project_id'];
+    $assigned_user_id = $_POST['assigned_user_id'];
+
+    // Prepare and bind to insert the task
+    $stmt = $conn->prepare("INSERT INTO TODOS (TITLE) VALUES (?)");
+    $stmt->bind_param("s", $task_title);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        $task_id = $stmt->insert_id;
+
+        // Insert into USER_TASK
+        $stmt_user_task = $conn->prepare("INSERT INTO USER_TASK (USER_ID, TASK_ID) VALUES (?, ?)");
+        $stmt_user_task->bind_param("ii", $assigned_user_id, $task_id);
+        $stmt_user_task->execute();
+        $stmt_user_task->close();
+
+        // Insert into PROJECT_USER_TASK
+        $stmt_project_user_task = $conn->prepare("INSERT INTO PROJECT_USER_TASK (PROJECT_ID, USER_ID, TASK_ID) VALUES (?, ?, ?)");
+        $stmt_project_user_task->bind_param("iii", $project_id, $assigned_user_id, $task_id);
+        $stmt_project_user_task->execute();
+        $stmt_project_user_task->close();
+
+        $task_message = "New task created and assigned successfully";
+    } else {
+        $task_message = "Error: " . $stmt->error;
+    }
+
+    // Close the statement
+    $stmt->close();
+}
+
+// If task checkbox state change is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_task'])) {
+    // Get the user ID from the session
+    $user_id = $_SESSION['userid'];
+
+    // Get the task ID and checked state from the form
+    $task_id = $_POST['task_id'];
+    $checked = isset($_POST['checked']) ? 1 : 0;
+
+    // Verify if the task belongs to the user
+    $stmt_verify = $conn->prepare("SELECT USER_ID FROM USER_TASK WHERE USER_ID = ? AND TASK_ID = ?");
+    $stmt_verify->bind_param("ii", $user_id, $task_id);
+    $stmt_verify->execute();
+    $stmt_verify->store_result();
+
+    if ($stmt_verify->num_rows > 0) {
+        // Update the task's checked state
+        $stmt_update = $conn->prepare("UPDATE TODOS SET CHECKED = ? WHERE ID = ?");
+        $stmt_update->bind_param("ii", $checked, $task_id);
+
+        if ($stmt_update->execute()) {
+            $task_update_message = "Task updated successfully";
+        } else {
+            $task_update_message = "Error updating task: " . $stmt_update->error;
+        }
+
+        $stmt_update->close();
+    } else {
+        $task_update_message = "You are not authorized to update this task.";
+    }
+
+    $stmt_verify->close();
+}
+
+// Retrieve projects where the user is a manager or has tasks assigned
+$user_id = $_SESSION['userid'];
+$projects_result = $conn->query("SELECT DISTINCT PROJECT.ID, PROJECT.PROJECT_NAME, PROJECT.MANAGER_ID
+                                FROM PROJECT 
+                                LEFT JOIN PROJECT_USER_TASK ON PROJECT.ID = PROJECT_USER_TASK.PROJECT_ID 
+                                WHERE PROJECT.MANAGER_ID = $user_id 
+                                OR PROJECT_USER_TASK.USER_ID = $user_id");
+
+// Retrieve all users for task assignment
+$users_result = $conn->query("SELECT ID, USERNAME FROM USERS");
+
+// Fetch users in an array to reuse
+$users = [];
+while ($user_row = $users_result->fetch_assoc()) {
+    $users[$user_row['ID']] = $user_row['USERNAME'];
+}
+
+// Fetch tasks and assigned users for each project
+$projects = [];
+while ($project_row = $projects_result->fetch_assoc()) {
+    $project_id = $project_row['ID'];
+
+    // Fetch tasks for the current project
+    $tasks_result = $conn->query("SELECT TODOS.ID AS TASK_ID, TODOS.TITLE, TODOS.CHECKED, USERS.ID AS USER_ID, USERS.USERNAME 
+                                  FROM TODOS
+                                  JOIN PROJECT_USER_TASK ON TODOS.ID = PROJECT_USER_TASK.TASK_ID
+                                  JOIN USERS ON PROJECT_USER_TASK.USER_ID = USERS.ID
+                                  WHERE PROJECT_USER_TASK.PROJECT_ID = $project_id");
+
+    $tasks = [];
+    while ($task_row = $tasks_result->fetch_assoc()) {
+        $tasks[] = $task_row;
+    }
+
+    $project_row['TASKS'] = $tasks;
+    $projects[] = $project_row;
+}
 
 // Close the connection
 $conn->close();
@@ -50,7 +165,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Project</title>
+    <title>Create New Project and Tasks</title>
     <style>
         .project-container {
             border: 1px solid #ddd;
@@ -60,13 +175,13 @@ $conn->close();
     </style>
 </head>
 <body>
-    <h1>Create New Project</h1>
+    <h1>Create New Project and Tasks</h1>
     
-    <!-- Display message -->
+    <!-- Display project creation message -->
     <?php if (!empty($message)): ?>
         <p><?php echo $message; ?></p>
     <?php endif; ?>
-    
+
     <!-- Project creation form -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="project_name">Project Name:</label>
@@ -76,15 +191,67 @@ $conn->close();
     </form>
 
     <h2>Your Projects</h2>
-    <?php if ($result->num_rows > 0): ?>
-        <?php while($row = $result->fetch_assoc()): ?>
+    <?php if (!empty($projects)): ?>
+        <?php foreach ($projects as $project): ?>
             <div class="project-container">
-                <p>Project Name: <?php echo htmlspecialchars($row['PROJECT_NAME']); ?></p>
-                <!-- Additional project details and tasks can be added here -->
+                <h3>Project Name: <?php echo htmlspecialchars($project['PROJECT_NAME']); ?></h3>
+
+                <!-- Task creation form for each project (only for managers) -->
+                <?php if ($project['MANAGER_ID'] == $user_id): ?>
+                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                        <label for="task_title">Task Title:</label>
+                        <input type="text" id="task_title" name="task_title" required>
+                        <br>
+                        <label for="assigned_user_id">Assign to User:</label>
+                        <select id="assigned_user_id" name="assigned_user_id" required>
+                            <?php foreach ($users as $user_id => $username): ?>
+                                <option value="<?php echo $user_id; ?>"><?php echo htmlspecialchars($username); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <input type="hidden" name="project_id" value="<?php echo $project['ID']; ?>">
+                        <br><br>
+                        <button type="submit" name="create_task">Add Task</button>
+                    </form>
+                <?php endif; ?>
+
+                <!-- Display task creation message -->
+                <?php if (!empty($task_message)): ?>
+                    <p><?php echo $task_message; ?></p>
+                <?php endif; ?>
+
+                <!-- Display task update message -->
+                <?php if (!empty($task_update_message)): ?>
+                    <p><?php echo $task_update_message; ?></p>
+                <?php endif; ?>
+
+                <!-- Display tasks for the project -->
+                <?php if (!empty($project['TASKS'])): ?>
+                    <h4>Tasks</h4>
+                    <ul>
+                        <?php foreach ($project['TASKS'] as $task): ?>
+                            <li>
+                                <?php echo htmlspecialchars($task['TITLE']); ?> - Assigned to: <?php echo htmlspecialchars($task['USERNAME']); ?>
+                                <?php if ($task['USER_ID'] == $_SESSION['userid']): ?>
+                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
+                                        <input type="hidden" name="task_id" value="<?php echo $task['TASK_ID']; ?>">
+                                        <input type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
+                                        <input type="hidden" name="update_task" value="1">
+                                    </form>
+                                <?php else: ?>
+                                    <input type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No tasks found for this project.</p>
+                <?php endif; ?>
             </div>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
     <?php else: ?>
         <p>No projects found.</p>
     <?php endif; ?>
+    <a href="index.php">My tasks</a>
+    <a href="login.php">change user</a>
 </body>
 </html>
