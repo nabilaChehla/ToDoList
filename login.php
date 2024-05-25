@@ -25,21 +25,13 @@
             $username = htmlspecialchars($username);
             $password = htmlspecialchars($password);
 
-            //connect to db and check username and password
-            //Connect to the db
-            $local = "localhost";
-            $dbusername = "root";
-            $dbpassword = "";
-            $dbname = "ToDo";
-            $connect = new mysqli($local, $dbusername, $dbpassword, $dbname);
-            //check connection
-            if (!$connect) {
-                die("Connection failed: " . $connect->connect_error);
-            }
+            //conn to db and check username and password
+            //conn to the db
+            require './conn/conn.php';
 
             //Check whether account exists
             $sql = "SELECT id,password FROM users WHERE username = ?";           
-            $stmt = $connect->prepare($sql);
+            $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $username);
             $stmt->execute();
             
@@ -49,25 +41,25 @@
                 $row = $res->fetch_assoc();
                 
                 //credentials correct: redirect to homepage
-                if( $row["password"] == md5($password) ){
+                if( $row["password"] == ($password) ){
                     echo "correct password";
                     //correct password
                     $_SESSION['userid'] = $row["id"];
                     $_SESSION['username'] = $username;
-                    $connect->close();
+                    $conn->close();
                     header("Location: index.php");
 
                 }else{
                     //incorrect password
                     //password incorrect
                     $msg2 = "Incorrect password";
-                    $connect->close();
+                    $conn->close();
                 } 
                 
             }else{
                 //Username does not exit
                 $msg1 = "Incorrect Username";
-                $connect->close();
+                $conn->close();
             }
         }
     ?>
