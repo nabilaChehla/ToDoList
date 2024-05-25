@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start() or trigger_error("", E_USER_ERROR);
 
 if(isset($_POST['title'])){
     // Check if user is logged in
@@ -43,4 +43,5 @@ if(isset($_POST['title'])){
     header("Location: ../index.php?mess=error");
     exit();
 }
+
 ?>
