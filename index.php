@@ -67,6 +67,7 @@ $todos = $conn->query("SELECT todos.* FROM todos INNER JOIN user_task ON todos.i
         </div>
     </div>
 <a href="login.php">change user</a>
+<a href="projects.php">My projects</a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
