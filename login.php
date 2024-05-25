@@ -41,8 +41,7 @@
                 $row = $res->fetch_assoc();
                 
                 //credentials correct: redirect to homepage
-                if( $row["password"] == ($password) ){
-                    echo "correct password";
+                if( $row["password"] == ( md5($password)) ){
                     //correct password
                     $_SESSION['userid'] = $row["id"];
                     $_SESSION['username'] = $username;

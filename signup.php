@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $msg1 = "Username already exists. Please choose another.";
         } else {
-            $hashed_password = ($password);;
+            $hashed_password = md5(($password));
 
             $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
             $stmt->bind_param("ss", $username, $hashed_password);
