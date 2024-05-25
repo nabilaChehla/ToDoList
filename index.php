@@ -12,9 +12,13 @@ if (!isset($_SESSION['userid'])) {
 }
 
 // Fetch only the tasks associated with the currently logged-in user
+// Fetch only the tasks associated with the currently logged-in user and not assigned to any project
 $user_id = $_SESSION['userid'];
-$todos = $conn->query("SELECT todos.* FROM todos INNER JOIN user_task ON todos.id = user_task.task_id WHERE user_task.user_id = $user_id ORDER BY todos.id DESC");
-
+$todos = $conn->query("SELECT todos.* FROM todos 
+                      INNER JOIN user_task ON todos.id = user_task.task_id 
+                      LEFT JOIN project_user_task ON todos.id = project_user_task.task_id 
+                      WHERE user_task.user_id = $user_id AND project_user_task.task_id IS NULL 
+                      ORDER BY todos.id DESC");
 
 ?>
 
@@ -97,6 +101,6 @@ $todos = $conn->query("SELECT todos.* FROM todos INNER JOIN user_task ON todos.i
             });
         });
     </script>
-
 </body>
+
 </html>

@@ -10,7 +10,7 @@
 
 <?php
 
-        session_start();
+        session_start() or trigger_error("", E_USER_ERROR);
         $msg1 = "";
         $msg2 = "";
 
@@ -86,5 +86,7 @@
     </div>
 
     <script src="./src/js/script.js"></script>
+
 </body>
+
 </html>

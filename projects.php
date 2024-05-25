@@ -1,10 +1,12 @@
 <?php
 
+
+// Start the session
+session_start() or trigger_error("", E_USER_ERROR);
+
 // Database credentials
 require './conn/conn.php';
 
-// Start the session
-session_start();
 echo "<h1> Welcome " .$_SESSION["username"] . "</h1>";
 // Check if user is logged in
 if (!isset($_SESSION['userid'])) {
@@ -197,7 +199,7 @@ $conn->close();
                 <h3>Project Name: <?php echo htmlspecialchars($project['PROJECT_NAME']); ?></h3>
 
                 <!-- Task creation form for each project (only for managers) -->
-                <?php if ($project['MANAGER_ID'] == $user_id): ?>
+                <?php if ($project['MANAGER_ID'] == $_SESSION['userid']): ?>
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                         <label for="task_title">Task Title:</label>
                         <input type="text" id="task_title" name="task_title" required>
