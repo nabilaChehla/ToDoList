@@ -5,6 +5,8 @@ $msg1 = "";
 $msg2 = "";
 $msg3 = "";
 
+require_once './zxcvbn.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -20,8 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $msg1 = "Username must be between 3 and 30 characters long.";
         $b = false;
     }
-    if (strlen($password) < 5) {
-        $msg2 = "Password must be at least 5 characters long.";
+    $score = p($password);
+    if ($score[0] < 3) {
+        $msg2 = '<p>'.$score[1].'</p><p>'.$score[2][0].'</p>';
+        $b = false;
+    }
+    if(strlen($password) < 5) {
+        $msg2 = $msg2.'<p>Passwords must be at least 5 characters long</p>';
         $b = false;
     } elseif ($password !== $confirm_password) {
         $msg3 = "Passwords do not match.";
