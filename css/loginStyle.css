@@ -1,0 +1,93 @@
+/* loginStyle.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.account-container {
+    background-color: #ffffff;
+    padding: 20px 40px;
+    
+    text-align: left;
+    max-width: 500px;
+    margin-right: 200px;
+    width: 100%;
+}
+
+.account-container h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.account-container input[type="text"],
+
+.account-container input[type="password"] {
+    width: 300px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #d674ba;
+    border-radius: 4px;
+}
+.signup-pw,.signup-input{
+    width: 300px;
+    padding: 7px;
+    margin: 0;
+    border: 1px solid #d674ba;
+    border-radius: 4px;
+}
+.login-img{
+    width: 400px;
+}
+.main-div{
+    display: flex ;
+    flex-direction: row;
+    border-radius: 8px;
+    
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-container button {
+    width: 100px;
+    padding: 10px;
+    background-color: #d674ba;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.account-container button:hover {
+    background-color: #d674ba;
+}
+
+.account-container a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #d674ba;
+    text-decoration: none;
+}
+
+.account-container a:hover {
+    text-decoration: underline;
+}
+
+.account-container .error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}
+.account-container div{
+    display: flex;
+    flex-direction: row;
+}

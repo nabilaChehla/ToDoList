@@ -129,7 +129,6 @@ $projects_result = $conn->query("
     ORDER BY PROJECT.CREATED_AT DESC
 ");
 
-
 // Retrieve all users for task assignment
 $users_result = $conn->query("SELECT ID, USERNAME FROM USERS");
 
@@ -170,13 +169,8 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Project and Tasks</title>
-    <style>
-        .project-container {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/project.css">
+
 </head>
 <body>
     <h1>Create New Project and Tasks</h1>
@@ -237,8 +231,8 @@ $conn->close();
                                 <?php echo htmlspecialchars($task['TITLE']); ?> - Assigned to: <?php echo htmlspecialchars($task['USERNAME']); ?>
                                 <?php if ($task['USER_ID'] == $_SESSION['userid']): ?>
                                     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
+                                        <input  type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
                                         <input type="hidden" name="task_id" value="<?php echo $task['TASK_ID']; ?>">
-                                        <input type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
                                         <input type="hidden" name="update_task" value="1">
                                     </form>
                                 <?php else: ?>
@@ -258,5 +252,7 @@ $conn->close();
     <a href="index.php">Personal tasks</a>
     <a href="completed_projects.php">Completed Projects</a>
     <a href="login.php">change user</a>
+    <a href="completed_tasks.php">completed tasks</a>
+
 </body>
 </html>

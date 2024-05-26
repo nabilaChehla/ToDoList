@@ -1,25 +1,20 @@
 <?php
-
-
 require 'conn/conn.php';
-session_start() or trigger_error("", E_USER_ERROR);
-echo "<h1> Welcome " .$_SESSION["username"] . "</h1>";
-// Check if user is logged in
+session_start();
 if (!isset($_SESSION['userid'])) {
-    // Redirect to login page or handle unauthorized access
     header("Location: login.php");
     exit();
 }
 
-// Fetch only the tasks associated with the currently logged-in user
-// Fetch only the tasks associated with the currently logged-in user and not assigned to any project
 $user_id = $_SESSION['userid'];
+echo "<h1> Welcome " . htmlspecialchars($_SESSION["username"]) . "</h1>";
+
+// Fetch only the incomplete tasks associated with the currently logged-in user and not assigned to any project
 $todos = $conn->query("SELECT todos.* FROM todos 
                       INNER JOIN user_task ON todos.id = user_task.task_id 
                       LEFT JOIN project_user_task ON todos.id = project_user_task.task_id 
-                      WHERE user_task.user_id = $user_id AND project_user_task.task_id IS NULL 
-                      ORDER BY todos.id DESC");
-
+                      WHERE user_task.user_id = $user_id AND project_user_task.task_id IS NULL AND todos.checked = 0 
+                      ORDER BY todos.date_time DESC");
 ?>
 
 <!DOCTYPE html>
@@ -28,10 +23,19 @@ $todos = $conn->query("SELECT todos.* FROM todos
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+        <header class="light-header">
+            <nav class="nav-list">
+                <button class="home-btn"><a href="projects.php">Projects</a></button>
+                <button><a href="completed_projects.php">Completed Projects</a></button>
+                <button><a href="login.php">Change User</a></button>
+                <button><a href="completed_tasks.php">Completed Tasks</a></button>
+                <button>Statistiques</button>
+            </nav>
+           
+        </header>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -57,11 +61,11 @@ $todos = $conn->query("SELECT todos.* FROM todos
                         
                         <div class="list-group">
                             <?php while ($todo = $todos->fetch_assoc()) { ?>
-                                <div class="list-group-item">
-                                <span id="<?php echo $todo['id']; ?>" class="remove-to-do">x</span>
-                                <input type="checkbox" class="check-box" data-todo-id="<?php echo $todo['id']; ?>" <?php echo $todo['checked'] ? 'checked' : ''; ?>>
-                                <h2 <?php echo $todo['checked'] ? 'class="checked"' : ''; ?>><?php echo $todo['title']; ?></h2>
-                                <small class="date-finished">Created: <?php echo $todo['date_time']; ?></small>
+                                <div class="list-group-item" id="task-<?php echo $todo['id']; ?>">
+                                    <span id="<?php echo $todo['id']; ?>" class="remove-to-do">x</span>
+                                    <input type="checkbox" class="check-box" data-todo-id="<?php echo $todo['id']; ?>">
+                                    <h2><?php echo htmlspecialchars($todo['title']); ?></h2>
+                                    <small class="date-finished">Created: <?php echo htmlspecialchars($todo['date_time']); ?></small>
                                 </div>
                             <?php } ?>
                         </div>
@@ -70,9 +74,6 @@ $todos = $conn->query("SELECT todos.* FROM todos
             </div>
         </div>
     </div>
-    <a href="index.php">Personal tasks</a>
-    <a href="completed_projects.php">Completed Projects</a>
-    <a href="login.php">change user</a>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -89,20 +90,16 @@ $todos = $conn->query("SELECT todos.* FROM todos
                 });
             });
             $(".check-box").click(function(){
-
                 const id = $(this).attr('data-todo-id');
-                const h2 = $(this).next();
+                const parent = $("#task-" + id);
 
                 $.post('endpoint/done.php', { id: id }, function(data){
                     if (data !== 'error') {
-                        h2.toggleClass('checked', data === '0');
-                        console.log("hiiii"); 
-
+                        parent.hide(600);
                     }
                 });
             });
         });
     </script>
 </body>
-
 </html>

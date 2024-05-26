@@ -98,5 +98,7 @@ $conn->close();
     <a href="index.php">Personal tasks</a>
     <a href="projects.php"> Projects</a>
     <a href="login.php">change user</a>
+    <a href="completed_tasks.php">completed tasks</a>
+
 </body>
 </html>

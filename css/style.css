@@ -2,11 +2,67 @@ body, h1, h2, h3, p, ul, li {
     margin: 0;
     padding: 0;
   }
+
+.light-header{
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: #B2DDED;
+  margin-top: -10px;
+  justify-content: space-around;
+  align-items:center; /* Center items horizontally */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 10px;
+}
+.home-btn{
+  color: rgb(0, 112, 205); 
+}
+
+nav button{
+  border: none;
+  font-size: 17px;
+  font-weight: 500;
+  margin-right: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  text-justify: initial;
+  border-radius: 25px;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: -10px;
+  justify-self: center;
+  justify-content: center;
+  background: none;
+  font-size: large;
+  font-weight: bold;
+}
+.nav-list a{
+  color: black;
+  text-decoration: none;
+
+}
+nav a:hover{
+  color: rgb(0, 112, 205);
+
+}
+.nav-list{
+  justify-content: flex-end;
+  height:20px;
+  background: none;
+  padding-top: 10px;
+  align-content: center;
+  display: flex;
+  padding: 0px;
+  justify-content: space-around;
+
+}
   
   /* Basic styling */
   body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #ff0000;
     color: #333;
   }
   
@@ -88,5 +144,9 @@ body, h1, h2, h3, p, ul, li {
     padding: 40px;
   }
   
-
-  
+        
+        
+        
+.checked {
+  text-decoration: line-through;
+}

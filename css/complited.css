@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+.task-container {
+    background-color: #fff;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 600px;
+}
+.task-container p {
+    margin: 10px 0;
+}
+.task-container p.strikethrough {
+    text-decoration: line-through; /* Strikethrough effect */
+}
+button {
+    background-color: #d47ade;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #d674ba;
+}
+.links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.light-header{
+    display: flex;
+    flex-wrap: nowrap;
+    background-color: #ebacd9;
+    margin-top: -10px;
+    justify-content: space-around;
+    align-items:center; /* Center items horizontally */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 25px;
+  }
+  .home-btn{
+    color: rgb(0, 112, 205); 
+  }
+  
+  nav button{
+    border: none;
+    font-size: 17px;
+    font-weight: 500;
+    margin-right: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    color: #fff;
+    text-justify: initial;
+    border-radius: 25px;
+    height: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: -10px;
+    justify-self: center;
+    justify-content: center;
+    background: none;
+    font-size: large;
+    font-weight: bold;
+  }
+  .nav-list a{
+    color: #fff;
+    text-decoration: none;
+  
+  }
+  nav a:hover{
+  
+  }
+  .nav-list{
+    justify-content: flex-end;
+    height:20px;
+    background: none;
+    padding-top: 10px;
+    align-content: center;
+    display: flex;
+    padding: 0px;
+    justify-content: space-around;
+  
+  }
