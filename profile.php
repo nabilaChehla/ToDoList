@@ -153,68 +153,30 @@ $statement_incomplete_tasks->execute();
             <p>Categories with All Tasks Done: $numCategoriesAllDone</p>
             <p>Categories with Incomplete Tasks: $numCategoriesNotAllDone</p>
         </div>";
-// Data for the chart
-$tasksChartData = json_encode([
-    'completed' => $numCompletedTasks,
-    'incomplete' => $numIncompleteTasks,
-]);
-
-// Output the result
-$username = $_SESSION["username"];
 } else {
-// User not logged in
-$username = "Guest";
+    // User not logged in
+    $statisticsHTML = "<p>Please log in to view completed tasks.</p>";
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Task Statistics</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>Manage Your Tasks</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h2>Welcome, <?php echo $username; ?>!</h2>
-<div style="width: 600px;">
-    <canvas id="tasksChart"></canvas>
-</div>
+    <nav class="nav-list">
+        <button class="home-btn"><a href="index.php">Tasks</a></button>
+        <button class="home-btn"><a href="projects.php">Projects</a></button>
+        <button><a href="completed_projects.php">Completed Projects</a></button>
+        <button><a href="login.php">Change User</a></button>
+        <button><a href="completed_tasks.php">Completed Tasks</a></button>
+        <button><a href="category.php">Category</a></button>
+        <button><a href="profile.php">Profile</a></button>
+    </nav>
 
-<script>
-    var tasksData = <?php echo $tasksChartData; ?>;
-    var ctx = document.getElementById('tasksChart').getContext('2d');
-    var tasksChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Completed', 'Incomplete', 'Projects', 'Categories'],
-            datasets: [{
-                label: 'Tasks',
-                data: [tasksData.completed, tasksData.incomplete, <?php echo $numProjects; ?>, <?php echo $numCategories; ?>],
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)', // Completed tasks color
-                    'rgba(255, 99, 132, 0.2)', // Incomplete tasks color
-                    'rgba(54, 162, 235, 0.2)', // Projects color
-                    'rgba(255, 206, 86, 0.2)' // Categories color
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)', // Completed tasks border color
-                    'rgba(255, 99, 132, 1)', // Incomplete tasks border color
-                    'rgba(54, 162, 235, 1)', // Projects border color
-                    'rgba(255, 206, 86, 1)' // Categories border color
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
-    });
-</script>
+    <?php echo $statisticsHTML; ?>
 </body>
 </html>

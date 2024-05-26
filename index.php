@@ -48,14 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch tasks for the user that are not in any project or category
-$tasks_result = $conn->query("SELECT t.id, t.title, t.checked
+$tasks_result = $conn->query("SELECT t.id, t.title, t.checked, t.date_time
                              FROM todos t
                              JOIN user_task ut ON t.id = ut.task_id
                              WHERE ut.user_id = $user_id
                              AND t.id NOT IN (SELECT task_id FROM user_category_task)
                              AND t.id NOT IN (SELECT task_id FROM project_user_task)
-                             ORDER BY t.date_time DESC");
+                             ORDER BY t.checked ASC, t.date_time DESC");
 
 $conn->close();
 ?>
@@ -111,6 +110,7 @@ $conn->close();
         echo "<form method='POST' action='' style='display:inline;'>";
         echo "<input type='hidden' name='task_id' value='$task_id'>";
         echo "<button type='submit' name='delete_task'>❌</button>";
+        
         echo "</form>";
         echo "</div>";
     }

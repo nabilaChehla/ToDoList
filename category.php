@@ -108,6 +108,7 @@ $conn->close();
                 <button><a href="completed_tasks.php">Completed Tasks</a></button>
                 <button><a href="category.php">category</a></button>
                 <button><a href="profile.php">profile</a></button>
+                <button><a href="completedCategories.php">completedCategories</a></button>
             </nav>
 </head>
 <body>
