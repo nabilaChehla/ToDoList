@@ -69,14 +69,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch existing categories for the current user, ordered by creation date
-$categories_result = $conn->query("SELECT id, cat_name FROM category WHERE user_id = $user_id ORDER BY created_at DESC");
+$categories_result = $conn->query("
+    SELECT c.id, c.cat_name
+    FROM category c
+    LEFT JOIN user_category_task uct ON c.id = uct.cat_id
+    LEFT JOIN todos t ON uct.task_id = t.id AND t.checked = 0
+    WHERE c.user_id = $user_id
+    GROUP BY c.id
+    HAVING COUNT(t.id) > 0 OR COUNT(uct.task_id) = 0
+    ORDER BY c.created_at DESC
+");
 
 // Fetch tasks for the user
-$tasks_result = $conn->query("SELECT t.id, t.title, t.checked, c.id AS category_id, c.cat_name 
-                             FROM todos t 
-                             JOIN user_category_task uct ON t.id = uct.task_id 
-                             JOIN category c ON uct.cat_id = c.id 
-                             WHERE uct.user_id = $user_id");
+$tasks_result = $conn->query("
+    SELECT t.id, t.title, t.checked, c.id AS category_id, c.cat_name 
+    FROM todos t 
+    JOIN user_category_task uct ON t.id = uct.task_id 
+    JOIN category c ON uct.cat_id = c.id 
+    WHERE uct.user_id = $user_id
+");
 
 $conn->close();
 ?>
@@ -100,16 +111,16 @@ $conn->close();
             margin-bottom: 10px;
         }
     </style>
-                <nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="completed_projects.php">Completed Projects</a></button>
-                <button><a href="login.php">Change User</a></button>
-                <button><a href="completed_tasks.php">Completed Tasks</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="profile.php">profile</a></button>
-                <button><a href="completedCategories.php">completedCategories</a></button>
-            </nav>
+    <nav class="nav-list">
+        <button class="home-btn"><a href="index.php">tasks</a></button>
+        <button class="home-btn"><a href="projects.php">projects</a></button>
+        <button><a href="completed_projects.php">Completed Projects</a></button>
+        <button><a href="login.php">Change User</a></button>
+        <button><a href="completed_tasks.php">Completed Tasks</a></button>
+        <button><a href="category.php">category</a></button>
+        <button><a href="profile.php">profile</a></button>
+        <button><a href="completedCategories.php">completedCategories</a></button>
+    </nav>
 </head>
 <body>
     <h1>Manage Categories and Tasks</h1>
@@ -128,7 +139,7 @@ $conn->close();
         $categories[$row['category_id']]['tasks'][] = $row;
     }
 
-    foreach ($categories_result as $category) {
+    while ($category = $categories_result->fetch_assoc()) {
         $category_id = $category['id'];
         $cat_name = $category['cat_name'];
         echo "<div class='category-container'>";
