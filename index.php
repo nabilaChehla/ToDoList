@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$tasks_result = $conn->query("SELECT t.id, t.title, t.checked, t.date_time
+$tasks_result = $conn->query("SELECT t.id, t.title, t.checked, DATE(t.date_time) AS task_date
                              FROM todos t
                              JOIN user_task ut ON t.id = ut.task_id
                              WHERE ut.user_id = $user_id
                              AND t.id NOT IN (SELECT task_id FROM user_category_task)
                              AND t.id NOT IN (SELECT task_id FROM project_user_task)
-                             ORDER BY t.checked ASC, t.date_time DESC");
+                             ORDER BY t.date_time DESC"); // Ordering by date_time
 
 $conn->close();
 ?>
@@ -74,17 +74,18 @@ $conn->close();
             margin-bottom: 10px;
         }
     </style>
-    <nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="completed_projects.php">Completed Projects</a></button>
-                <button><a href="login.php">Change User</a></button>
-                <button><a href="completed_tasks.php">Completed Tasks</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="profile.php">profile</a></button>
-            </nav>
 </head>
 <body>
+    <nav class="nav-list">
+        <button class="home-btn"><a href="index.php">tasks</a></button>
+        <button class="home-btn"><a href="projects.php">projects</a></button>
+        <button><a href="completed_projects.php">Completed Projects</a></button>
+        <button><a href="login.php">Change User</a></button>
+        <button><a href="completed_tasks.php">Completed Tasks</a></button>
+        <button><a href="category.php">category</a></button>
+        <button><a href="profile.php">profile</a></button>
+    </nav>
+
     <h1>Manage Your Tasks</h1>
 
     <h2>Add a New Task</h2>
@@ -96,7 +97,23 @@ $conn->close();
 
     <h2>Your Tasks</h2>
     <?php
+    $current_date = null; // Variable to keep track of the current date
+
     while ($task = $tasks_result->fetch_assoc()) {
+        $task_date = $task['task_date'];
+        $display_date = $task_date === date('Y-m-d') ? 'Today' : $task_date; // Check if date is today
+
+        // Check if the task date is different from the current date
+        if ($task_date !== $current_date) {
+            // If so, display a line separator and the date
+            if ($current_date !== null) {
+                echo '<hr>'; // Line separator
+            }
+            echo "<h3>$display_date</h3>"; // Display the date or "Today"
+            $current_date = $task_date; // Update current date
+        }
+
+        // Display task
         $task_id = $task['id'];
         $task_title = htmlspecialchars($task['title']);
         $checked = $task['checked'] ? 'checked' : '';
@@ -110,7 +127,6 @@ $conn->close();
         echo "<form method='POST' action='' style='display:inline;'>";
         echo "<input type='hidden' name='task_id' value='$task_id'>";
         echo "<button type='submit' name='delete_task'>❌</button>";
-        
         echo "</form>";
         echo "</div>";
     }
