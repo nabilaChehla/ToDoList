@@ -1,5 +1,4 @@
 <?php
-
 // Start the session
 session_start() or trigger_error("", E_USER_ERROR);
 
@@ -104,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_task'])) {
         $stmt_update->bind_param("ii", $checked, $task_id);
 
         if ($stmt_update->execute()) {
-
+            $task_update_message = "Task updated successfully";
         } else {
             $task_update_message = "Error updating task: " . $stmt_update->error;
         }
@@ -117,14 +116,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_task'])) {
     $stmt_verify->close();
 }
 
-// Retrieve projects where the user is a manager or has tasks assigned
+// Retrieve projects where the user is a manager or has tasks assigned and not all tasks are completed
 $user_id = $_SESSION['userid'];
-$projects_result = $conn->query("SELECT DISTINCT PROJECT.ID, PROJECT.PROJECT_NAME, PROJECT.MANAGER_ID, PROJECT.CREATED_AT
-                                FROM PROJECT 
-                                LEFT JOIN PROJECT_USER_TASK ON PROJECT.ID = PROJECT_USER_TASK.PROJECT_ID 
-                                WHERE PROJECT.MANAGER_ID = $user_id 
-                                OR PROJECT_USER_TASK.USER_ID = $user_id
-                                ORDER BY PROJECT.CREATED_AT DESC");
+$projects_result = $conn->query("
+    SELECT DISTINCT PROJECT.ID, PROJECT.PROJECT_NAME, PROJECT.MANAGER_ID, PROJECT.CREATED_AT
+    FROM PROJECT 
+    LEFT JOIN PROJECT_USER_TASK ON PROJECT.ID = PROJECT_USER_TASK.PROJECT_ID 
+    LEFT JOIN TODOS ON PROJECT_USER_TASK.TASK_ID = TODOS.ID
+    WHERE (PROJECT.MANAGER_ID = $user_id OR PROJECT_USER_TASK.USER_ID = $user_id OR PROJECT_USER_TASK.USER_ID IS NULL)
+    AND (TODOS.CHECKED = 0 OR TODOS.CHECKED IS NULL)
+    AND (PROJECT_USER_TASK.USER_ID IS NOT NULL OR PROJECT.MANAGER_ID = $user_id)
+    ORDER BY PROJECT.CREATED_AT DESC
+");
+
 
 // Retrieve all users for task assignment
 $users_result = $conn->query("SELECT ID, USERNAME FROM USERS");
@@ -142,10 +146,10 @@ while ($project_row = $projects_result->fetch_assoc()) {
 
     // Fetch tasks for the current project
     $tasks_result = $conn->query("SELECT TODOS.ID AS TASK_ID, TODOS.TITLE, TODOS.CHECKED, USERS.ID AS USER_ID, USERS.USERNAME 
-                                FROM TODOS
-                                JOIN PROJECT_USER_TASK ON TODOS.ID = PROJECT_USER_TASK.TASK_ID
-                                JOIN USERS ON PROJECT_USER_TASK.USER_ID = USERS.ID
-                                WHERE PROJECT_USER_TASK.PROJECT_ID = $project_id");
+                                  FROM TODOS
+                                  JOIN PROJECT_USER_TASK ON TODOS.ID = PROJECT_USER_TASK.TASK_ID
+                                  JOIN USERS ON PROJECT_USER_TASK.USER_ID = USERS.ID
+                                  WHERE PROJECT_USER_TASK.PROJECT_ID = $project_id");
 
     $tasks = [];
     while ($task_row = $tasks_result->fetch_assoc()) {
@@ -251,7 +255,8 @@ $conn->close();
     <?php else: ?>
         <p>No projects found.</p>
     <?php endif; ?>
-    <a href="index.php">My tasks</a>
+    <a href="index.php">Personal tasks</a>
+    <a href="completed_projects.php">Completed Projects</a>
     <a href="login.php">change user</a>
 </body>
 </html>
