@@ -107,7 +107,7 @@ $conn->close();
                 <button><a href="login.php">Change User</a></button>
                 <button><a href="completed_tasks.php">Completed Tasks</a></button>
                 <button><a href="category.php">category</a></button>
-                <button>Statistiques</button>
+                <button><a href="profile.php">profile</a></button>
             </nav>
 </head>
 <body>
