@@ -64,15 +64,19 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Completed Projects</title>
-    <style>
-        .project-container {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/completed_projects.css">
+    <nav class="nav-list">
+                <button class="home-btn"><a href="index.php">tasks</a></button>
+                <button class="home-btn"><a href="projects.php">projects</a></button>
+                <button><a href="completed_projects.php">Completed Projects</a></button>
+                <button><a href="login.php">Change User</a></button>
+                <button><a href="completed_tasks.php">Completed Tasks</a></button>
+                <button><a href="category.php">category</a></button>
+                <button>Statistiques</button>
+            </nav>
 </head>
 <body>
+    
     <h1>Completed Projects</h1>
     
     <h2>Your Completed Projects</h2>
@@ -96,9 +100,9 @@ $conn->close();
     <?php endif; ?>
 
     <a href="index.php">Personal tasks</a>
-    <a href="projects.php"> Projects</a>
-    <a href="login.php">change user</a>
-    <a href="completed_tasks.php">completed tasks</a>
+    <a href="projects.php">Projects</a>
+    <a href="login.php">Change user</a>
+    <a href="completed_tasks.php">Completed tasks</a>
 
 </body>
 </html>

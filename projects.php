@@ -173,6 +173,16 @@ $conn->close();
 
 </head>
 <body>
+        <header class="light-header">
+            <nav class="nav-list">
+                <button class="home-btn"><a href="index.php">Projects</a></button>
+                <button><a href="completed_projects.php">Completed Projects</a></button>
+                <button><a href="login.php">Change User</a></button>
+                <button><a href="completed_tasks.php">Completed Tasks</a></button>
+                <button>Statistiques</button>
+            </nav>
+           
+        </header>
     <h1>Create New Project and Tasks</h1>
     
     <!-- Display project creation message -->
@@ -200,7 +210,7 @@ $conn->close();
                         <label for="task_title">Task Title:</label>
                         <input type="text" id="task_title" name="task_title" required>
                         <br>
-                        <label for="assigned_user_id">Assign to User:</label>
+                        <label  for="assigned_user_id">Assign to User:</label>
                         <select id="assigned_user_id" name="assigned_user_id" required>
                             <?php foreach ($users as $user_id => $username): ?>
                                 <option value="<?php echo $user_id; ?>"><?php echo htmlspecialchars($username); ?></option>
@@ -227,11 +237,13 @@ $conn->close();
                     <h4>Tasks</h4>
                     <ul>
                         <?php foreach ($project['TASKS'] as $task): ?>
+                            <?php echo htmlspecialchars($task['USERNAME'])." "; ?>
                             <li>
-                                <?php echo htmlspecialchars($task['TITLE']); ?> - Assigned to: <?php echo htmlspecialchars($task['USERNAME']); ?>
+                                <?php echo htmlspecialchars($task['TITLE']); ?> 
                                 <?php if ($task['USER_ID'] == $_SESSION['userid']): ?>
-                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
-                                        <input  type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
+                                    <form class="checkbox-container"method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
+                                        <input class="ckeckbox-input" type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
+                                        <span class="checkbox-custom"></span>
                                         <input type="hidden" name="task_id" value="<?php echo $task['TASK_ID']; ?>">
                                         <input type="hidden" name="update_task" value="1">
                                     </form>
@@ -249,10 +261,5 @@ $conn->close();
     <?php else: ?>
         <p>No projects found.</p>
     <?php endif; ?>
-    <a href="index.php">Personal tasks</a>
-    <a href="completed_projects.php">Completed Projects</a>
-    <a href="login.php">change user</a>
-    <a href="completed_tasks.php">completed tasks</a>
-
 </body>
 </html>
