@@ -36,8 +36,6 @@ XAMPP
 
 ## Team (Code Girls)
 
-. **Fekir Nabila Chehla**
-
 . **Bourou Melissa**
-
+. **Fekir Nabila Chehla**
 . **Lemdani Hiba**
