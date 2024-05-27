@@ -10,7 +10,7 @@ It showcases the skills and knowledge we have acquired in this module, including
 
 ## Project Overview
 
-The TO-DOIT App is a web-based application designed to streamline task and project management. It enables users to create accounts with secure password verification using [zxcvbn](https://github.com/dropbox/zxcvbn.git); an MIT lisenced password strength estimator through pattern matching and conservative estimation. The app provides a user-friendly interface for adding and categorizing tasks. Additionally, it supports project creation, allowing managers to assign tasks to various users. Users can mark tasks as completed, making the status visible to all project members.
+The To-Do List App is a web-based application designed to streamline task and project management. It enables users to create accounts with secure password verification using [zxcvbn](https://github.com/dropbox/zxcvbn.git); an MIT lisenced password strength estimator through pattern matching and conservative estimation. The app provides a user-friendly interface for adding and categorizing tasks. Additionally, it supports project creation, allowing managers to assign tasks to various users. Users can mark tasks as completed, making the status visible to all project members.
 
 ## Getting Started
 
