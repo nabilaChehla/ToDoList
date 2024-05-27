@@ -65,17 +65,23 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Completed Projects</title>
     <link rel="stylesheet" href="css/completed_projects.css">
-    <nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="login.php">Change User</a></button>
-
-            </nav>
+    <link rel="stylesheet" href="./css/checkboxStyle.css">
+    <link rel="stylesheet" href="./css/project.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <h1>Completed Projects</h1>
+
+    <header>
+        <nav class="nav-list">
+            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
+            <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
+        </nav>
+    </header>
+    <div class='container'>
     
     <h2>Your Completed Projects</h2>
     <?php if (!empty($completed_projects)): ?>
@@ -85,9 +91,15 @@ $conn->close();
                 <h4>Tasks</h4>
                 <ul>
                     <?php foreach ($project['TASKS'] as $task): ?>
-                        <li>
-                            <?php echo htmlspecialchars($task['TITLE']); ?> - Assigned to: <?php echo htmlspecialchars($task['USERNAME']); ?>
-                            <input type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
+                        <li class='task-container'>
+                            <label>
+                                <?php echo htmlspecialchars($task['USERNAME']); ?>
+                            </label> 
+                            <label>
+                                <?php echo htmlspecialchars($task['TITLE']) ; ?> 
+                            </label> 
+                            <input class='checkbox-custom' type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
+                            
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -96,11 +108,7 @@ $conn->close();
     <?php else: ?>
         <p>No completed projects found.</p>
     <?php endif; ?>
-
-    <a href="index.php">Personal tasks</a>
-    <a href="projects.php">Projects</a>
-    <a href="login.php">Change user</a>
-    <a href="completed_tasks.php">Completed tasks</a>
+    </div>
 
 </body>
 </html>

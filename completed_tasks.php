@@ -70,38 +70,43 @@ $lastDate = null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Completed Tasks</title>
-    <link rel="stylesheet" href="./css/complited.css">
+    <link rel="stylesheet" href="css/completed_projects.css">
+    <link rel="stylesheet" href="./css/checkboxStyle.css">
+    <link rel="stylesheet" href="./css/project.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-<header class="light-header">
-<nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="login.php">Change User</a></button>
-
-            </nav>
-</header>
-<h1>Your Completed Tasks</h1>
-<?php foreach ($tasks as $task): ?>
-    <?php
-    $currentDate = formatDate($task['DATE_TIME']);
-    if ($currentDate !== $lastDate) {
-        if ($lastDate !== null) {
-            echo "<hr>";
-        }
-        echo "<h2>{$currentDate}</h2>";
-        $lastDate = $currentDate;
-    }
-    ?>
-    <div class="task-container">
-        <p class="strikethrough"><strong>Title:</strong> <?= htmlspecialchars($task['TITLE']); ?></p>
-        <p class="strikethrough"><strong>Date:</strong> <?= htmlspecialchars($task['DATE_TIME']); ?></p>
-        <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>">
-            <input type="hidden" name="task_id" value="<?= $task['ID']; ?>">
-            <button type="submit">Delete</button>
-        </form>
+    <header class="light-header">
+        <nav class="nav-list">
+            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
+            <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
+        </nav>
+    </header>
+    <div class="container">
+        <h2>Your Completed Tasks</h2>
+        <?php foreach ($tasks as $task): ?>
+            <?php
+            $currentDate = formatDate($task['DATE_TIME']);
+            if ($currentDate !== $lastDate) {
+                if ($lastDate !== null) {
+                    echo "<hr>";
+                }
+                echo "<h3>{$currentDate}</h3>";
+                $lastDate = $currentDate;
+            }
+            ?>
+            <div class="task-container">
+                <label > <?= htmlspecialchars($task['TITLE']); ?></label>
+                <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>">
+                    <input type="hidden" name="task_id" value="<?= $task['ID']; ?>">
+                    <button class="delete-btn" type="submit">❌</button>
+                </form>
+            </div>
+        <?php endforeach; ?>
     </div>
-<?php endforeach; ?>
 </body>
 </html>

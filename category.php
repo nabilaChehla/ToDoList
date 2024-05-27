@@ -101,45 +101,32 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Manage Categories and Tasks</title>
-    <style>
-        .task-completed {
-            text-decoration: line-through;
-        }
-        .category-container {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-        .category-title {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        .date-separator {
-            font-weight: bold;
-            margin-top: 20px;
-            border-top: 2px solid #000;
-            padding-top: 10px;
-        }
-    </style>
-    <nav class="nav-list">
-        <button class="home-btn"><a href="index.php">tasks</a></button>
-        <button class="home-btn"><a href="projects.php">projects</a></button>
-        <button><a href="category.php">category</a></button>
-        <button><a href="login.php">Change User</a></button>
-    </nav>
+    <link rel="stylesheet" href="./css/checkboxStyle.css">
+    <link rel="stylesheet" href="./css/project.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
 </head>
 <body>
-    <h1>Manage Categories and Tasks</h1>
+    <header>
+        <nav class="nav-list">
+            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <li class='current-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
+            <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
+        </nav>
+    </header>
 
+    <div class="container">
     <?php if ($message): ?>
         <p><?php echo $message; ?></p>
     <?php endif; ?>
 
     <h2>Create a New Category</h2>
     <form method="POST" action="">
-        <label for="category_name">Category Name:</label>
-        <input type="text" id="category_name" name="category_name" required>
-        <button type="submit" name="new_category">Create Category</button>
+        <input class='task-input' type="text" placeholder="Enter category name" id="category_name" name="category_name" required>
+        <button class="add-btn" type="submit" name="new_category"></button>
     </form>
 
     <?php
@@ -162,25 +149,24 @@ $conn->close();
             if ($current_date !== '') {
                 echo "<div class='date-separator'></div>";
             }
-            echo "<div class='date-separator'>$display_date</div>";
+            echo "<h3 class='date-separator'>$display_date</h3>";
             $current_date = $display_date;
         }
 
         echo "<div class='category-container'>";
-        echo "<div class='category-title'>" . htmlspecialchars($cat_name) . "</div>";
-
+        
         // Button to delete category
-        echo "<form method='POST' action='' style='display:inline;'>";
-        echo "<input type='hidden' name='category_id' value='$category_id'>";
-        echo "<button type='submit' name='delete_category'>Delete Category</button>";
+        echo "<form class='new-cat-title' method='POST' action='' '>";
+        echo    "<h3 class='category-title'>" . htmlspecialchars($cat_name) . "</h3>";
+        echo    "<input type='hidden' name='category_id' value='$category_id'>";
+        echo    "<button class=\"delete-btn\" type='submit' name='delete_category'>❌</button>";
         echo "</form>";
 
         // Form to add task to this category
         echo "<form method='POST' action=''>";
-        echo "<input type='hidden' name='category_id' value='$category_id'>";
-        echo "<label for='task_title_$category_id'>Task Title:</label>";
-        echo "<input type='text' id='task_title_$category_id' name='task_title' required>";
-        echo "<button type='submit' name='add_task'>Add Task</button>";
+        echo "<input type='hidden'  name='category_id' value='$category_id'>";
+        echo "<input class='task-input' type='text' placeholder='add a task' id='task_title_$category_id' name='task_title' required>";
+        echo "<button class='add-btn' type='submit' name='add_task'></button>";
         echo "</form>";
 
         if (isset($categories[$category_id]['tasks'])) {
@@ -190,15 +176,15 @@ $conn->close();
                 $task_title = htmlspecialchars($task['title']);
                 $checked = $task['checked'] ? 'checked' : '';
                 $task_completed_class = $task['checked'] ? 'task-completed' : '';
-                echo "<li>";
-                echo "<form method='POST' action='' style='display:inline;'>";
+                echo "<li class='task-container'>";
+                echo "<form method='POST' action=''>";
                 echo "<input type='hidden' name='task_id' value='$task_id'>";
-                echo "<input type='checkbox' name='toggle_task' onchange='this.form.submit()' $checked>";
-                echo "<span class='$task_completed_class'>$task_title</span>";
+                echo "<input class='checkbox-custom' type='checkbox' name='toggle_task' onchange='this.form.submit()' $checked>";
+                echo "<label class='$task_completed_class'>$task_title</label>";
                 echo "</form>";
-                echo "<form method='POST' action='' style='display:inline;'>";
+                echo "<form method='POST' action=''>";
                 echo "<input type='hidden' name='task_id' value='$task_id'>";
-                echo "<button type='submit' name='delete_task'>❌</button>";
+                echo "<button class=\"delete-btn\" type='submit' name='delete_task'>❌</button>";
                 echo "</form>";
                 echo "</li>";
             }
@@ -207,6 +193,7 @@ $conn->close();
         echo "</div>";
     }
     ?>
-    <a href="completedCategories.php">SEE COMPLETED Categories</a>
+    <a href="completedCategories.php">See Complited Categories</a>
+</div>
 </body>
 </html>

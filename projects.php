@@ -5,7 +5,6 @@ session_start() or trigger_error("", E_USER_ERROR);
 // Database credentials
 require './conn/conn.php';
 
-echo "<h1> Welcome " . $_SESSION["username"] . "</h1>";
 // Check if user is logged in
 if (!isset($_SESSION['userid'])) {
     // Redirect to login page or handle unauthorized access
@@ -73,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_task'])) {
         $stmt_project_user_task->execute();
         $stmt_project_user_task->close();
 
-        $task_message = "New task created and assigned successfully";
     } else {
         $task_message = "Error: " . $stmt->error;
     }
@@ -103,9 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_task'])) {
         $stmt_update->bind_param("ii", $checked, $task_id);
 
         if ($stmt_update->execute()) {
-            $task_update_message = "Task updated successfully";
         } else {
-            $task_update_message = "Error updating task: " . $stmt_update->error;
         }
 
         $stmt_update->close();
@@ -169,98 +165,102 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Project and Tasks</title>
-  <!--  <link rel="stylesheet" href="./css/project.css"> -->
-
+    <link rel="stylesheet" href="./css/checkboxStyle.css">
+    <link rel="stylesheet" href="./css/project.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-        <header class="light-header">
+    <header>
         <nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="login.php">Change User</a></button>
+            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='current-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
+            <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
+        </nav>
+    </header>
+    <div class='container'>
+        <!-- Display project creation message -->
+        <?php if (!empty($message)): ?>
+            <p><?php echo $message; ?></p>
+        <?php endif; ?>
+        <h2>Add a New Project</h2>
 
-            </nav>
-           
-        </header>
-    <h1>Create New Project and Tasks</h1>
-    
-    <!-- Display project creation message -->
-    <?php if (!empty($message)): ?>
-        <p><?php echo $message; ?></p>
-    <?php endif; ?>
+        <!-- Project creation form -->
+        <form  method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            
+            <input  class='task-input' type="text" id="project_name"  placeholder="Enter project name" name="project_name" required>
+            <br><br>
+            <button class='add-btn' type="submit" name="create_project"></button>
+        </form>
 
-    <!-- Project creation form -->
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <label for="project_name">Project Name:</label>
-        <input type="text" id="project_name" name="project_name" required>
-        <br><br>
-        <button type="submit" name="create_project">Create Project</button>
-    </form>
+        <h2>Your Projects</h2>
+        <?php if (!empty($projects)): ?>
+            <?php foreach ($projects as $project): ?>
+                <div class="project-container">
+                    <h3>Project Name: <?php echo htmlspecialchars($project['PROJECT_NAME']); ?></h3>
 
-    <h2>Your Projects</h2>
-    <?php if (!empty($projects)): ?>
-        <?php foreach ($projects as $project): ?>
-            <div class="project-container">
-                <h3>Project Name: <?php echo htmlspecialchars($project['PROJECT_NAME']); ?></h3>
+                    <!-- Task creation form for each project (only for managers) -->
+                    <?php if ($project['MANAGER_ID'] == $_SESSION['userid']): ?>
+                        <form class='form-assign'  method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <label for="task_title">Task Title:</label>
+                            <input type="text" id="task_title" name="task_title" required>
+                            <br>
+                            <label  for="assigned_user_id">Assign to User:</label>
+                            <select id="assigned_user_id" name="assigned_user_id" required>
+                                <?php foreach ($users as $user_id => $username): ?>
+                                    <option value="<?php echo $user_id; ?>"><?php echo htmlspecialchars($username); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <input type="hidden" name="project_id" value="<?php echo $project['ID']; ?>">
+                            <br><br>
+                            <button class="add-btn" type="submit" name="create_task">Add Task</button>
+                        </form>
+                    <?php endif; ?>
 
-                <!-- Task creation form for each project (only for managers) -->
-                <?php if ($project['MANAGER_ID'] == $_SESSION['userid']): ?>
-                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                        <label for="task_title">Task Title:</label>
-                        <input type="text" id="task_title" name="task_title" required>
-                        <br>
-                        <label  for="assigned_user_id">Assign to User:</label>
-                        <select id="assigned_user_id" name="assigned_user_id" required>
-                            <?php foreach ($users as $user_id => $username): ?>
-                                <option value="<?php echo $user_id; ?>"><?php echo htmlspecialchars($username); ?></option>
+                    <!-- Display task creation message -->
+                    <?php if (!empty($task_message)): ?>
+                        <p><?php echo $task_message; ?></p>
+                    <?php endif; ?>
+
+                    <!-- Display task update message -->
+                    <?php if (!empty($task_update_message)): ?>
+                        <p><?php echo $task_update_message; ?></p>
+                    <?php endif; ?>
+
+                    <!-- Display tasks for the project -->
+                    <?php if (!empty($project['TASKS'])): ?>
+                        <h3>Tasks</h3>
+                        <ul>
+                            <?php foreach ($project['TASKS'] as $task): ?>
+                                
+                                <li class='task-container'>
+                                        <div> <?php echo htmlspecialchars($task['USERNAME']); ?></div>
+                                        <?php echo htmlspecialchars($task['TITLE']) ; ?> 
+                                        <?php if ($task['USER_ID'] == $_SESSION['userid']): ?>
+                                            <form class="checkbox-container" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
+                                                <input class='checkbox-custom' type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
+                                                <input type="hidden" name="task_id" value="<?php echo $task['TASK_ID']; ?>">
+                                                <input type="hidden" name="update_task" value="1">
+                                            </form>
+                                        <?php else: ?>
+                                            <input type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
+                                        <?php endif; ?>
+                                    
+                                </li>
                             <?php endforeach; ?>
-                        </select>
-                        <input type="hidden" name="project_id" value="<?php echo $project['ID']; ?>">
-                        <br><br>
-                        <button type="submit" name="create_task">Add Task</button>
-                    </form>
-                <?php endif; ?>
-
-                <!-- Display task creation message -->
-                <?php if (!empty($task_message)): ?>
-                    <p><?php echo $task_message; ?></p>
-                <?php endif; ?>
-
-                <!-- Display task update message -->
-                <?php if (!empty($task_update_message)): ?>
-                    <p><?php echo $task_update_message; ?></p>
-                <?php endif; ?>
-
-                <!-- Display tasks for the project -->
-                <?php if (!empty($project['TASKS'])): ?>
-                    <h4>Tasks</h4>
-                    <ul>
-                        <?php foreach ($project['TASKS'] as $task): ?>
-                            <?php echo htmlspecialchars($task['USERNAME'])." "; ?>
-                            <li>
-                                <?php echo htmlspecialchars($task['TITLE']); ?> 
-                                <?php if ($task['USER_ID'] == $_SESSION['userid']): ?>
-                                    <form class="checkbox-container"method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display:inline;">
-                                        <input class="ckeckbox-input" type="checkbox" name="checked" value="1" <?php echo $task['CHECKED'] ? 'checked' : ''; ?> onchange="this.form.submit()">
-                                        <span class="checkbox-custom"></span>
-                                        <input type="hidden" name="task_id" value="<?php echo $task['TASK_ID']; ?>">
-                                        <input type="hidden" name="update_task" value="1">
-                                    </form>
-                                <?php else: ?>
-                                    <input type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>No tasks found for this project.</p>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No projects found.</p>
-    <?php endif; ?>
-    <a href="completed_projects.php">SEE COMPLETED PROJECTS</a>
+                        </ul>
+                    <?php else: ?>
+                        <p>No tasks found for this project.</p>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No projects found.</p>
+        <?php endif; ?>
+        <a href="completed_projects.php">SEE COMPLETED PROJECTS</a>
+    </div>
+  
 </body>
 </html>

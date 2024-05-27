@@ -18,7 +18,7 @@ if (isset($_SESSION['userid'])) {
 
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
+    if ($result) {
         while ($row = $result->fetch_assoc()) {
             $currentDate = date('Y-m-d', strtotime($row['created_at']));
             $categoriesByDate[$currentDate][] = [
@@ -26,9 +26,7 @@ if (isset($_SESSION['userid'])) {
                 'cat_id' => $row['cat_id']
             ];
         }
-    } else {
-        echo "<p>No categories found with all tasks completed.</p>";
-    }
+    } 
 } else {
     echo "<p>User ID not found in session.</p>";
 }
@@ -39,83 +37,54 @@ if (isset($_SESSION['userid'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Completed Tasks</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
-    .category-container {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        padding: 10px;
-    }
-    .category-name {
-        color: #333;
-        margin-bottom: 10px;
-    }
-    .task-list {
-        list-style-type: none;
-        padding: 0;
-    }
-    .task-item {
-        margin-bottom: 5px;
-    }
-    input[type="checkbox"] {
-        margin-right: 5px;
-    }
-    del {
-        color: #999;
-    }
-    hr {
-        border: 1px solid #ccc;
-        margin: 20px 0;
-    }
-    .date-header {
-        font-weight: bold;
-        font-size: 1.2em;
-        margin-top: 20px;
-    }
-</style>
-<nav class="nav-list">
-                <button class="home-btn"><a href="index.php">tasks</a></button>
-                <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="category.php">category</a></button>
-                <button><a href="login.php">Change User</a></button>
-
-            </nav>
+    <link rel="stylesheet" href="css/completed_projects.css">
+    <link rel="stylesheet" href="./css/checkboxStyle.css">
+    <link rel="stylesheet" href="./css/project.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Completed categories</h1>
-<?php
-if (!empty($categoriesByDate)) {
-    $today = date('Y-m-d');
-    foreach ($categoriesByDate as $date => $categories) {
-        $displayDate = ($date === $today) ? 'Today' : $date;
-        echo "<div class='date-header'>Created on: $displayDate</div><hr>";
-        foreach ($categories as $category) {
-            echo "<div class='category-container'>";
-            echo "<div class='category-name'>" . $category['cat_name'] . "</div>";
-            echo "<ul class='task-list'>";
-            $tasks_sql = "SELECT * FROM todos WHERE id IN (SELECT task_id FROM user_category_task WHERE cat_id = " . $category['cat_id'] . ")";
-            $tasks_result = $conn->query($tasks_sql);
-            while ($task_row = $tasks_result->fetch_assoc()) {
-                echo "<li class='task-item'>";
-                if ($task_row['checked'] == 1) {
-                    echo "<input type='checkbox' checked disabled> <del>" . $task_row['title'] . "</del>";
-                } else {
-                    echo "<input type='checkbox' disabled> " . $task_row['title'];
+    <header>
+        <nav class="nav-list">
+            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
+            <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
+        </nav>
+    </header>
+    <div class="container">
+    <h2>Completed categories</h2>
+    <?php
+        if (!empty($categoriesByDate)) {
+            $today = date('Y-m-d');
+            foreach ($categoriesByDate as $date => $categories) {
+                $displayDate = ($date === $today) ? 'Today' : $date;
+                echo "<div class='date-header'>Created on: $displayDate</div><hr>";
+                foreach ($categories as $category) {
+                    echo "<div class='category-container'>";
+                    echo "<div class='category-name'>" . $category['cat_name'] . "</div>";
+                    echo "<ul class='task-list'>";
+                    $tasks_sql = "SELECT * FROM todos WHERE id IN (SELECT task_id FROM user_category_task WHERE cat_id = " . $category['cat_id'] . ")";
+                    $tasks_result = $conn->query($tasks_sql);
+                    while ($task_row = $tasks_result->fetch_assoc()) {
+                        echo "<li class='task-item'>";
+                        if ($task_row['checked'] == 1) {
+                            echo "<input type='checkbox' checked disabled> <del>" . $task_row['title'] . "</del>";
+                        } else {
+                            echo "<input type='checkbox' disabled> " . $task_row['title'];
+                        }
+                        echo "</li>";
+                    }
+                    echo "</ul>";
+                    echo "</div>"; // .category-container
                 }
-                echo "</li>";
             }
-            echo "</ul>";
-            echo "</div>"; // .category-container
+        } else {
+            echo "<p>No categories found with all tasks completed.</p>";
         }
-    }
-} else {
-    echo "<p>No categories found with all tasks completed.</p>";
-}
-$conn->close();
-?>
+        $conn->close();
+    ?>
+    </div>
 </body>
 </html>
