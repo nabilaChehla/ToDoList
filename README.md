@@ -17,7 +17,7 @@ The To-Do List App is a web-based application designed to streamline task and pr
 To get started with the To-Do List App, follow these steps:
 
 1. **Clone the repository:**
-     git clone <https://github.com/your-username/ToDoList.git>
+     git clone <https://github.com/nabilaChehla/ToDoList.git>
 
 2. **Navigate to the project directory:**
 cd ToDoList
