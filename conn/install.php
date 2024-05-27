@@ -56,10 +56,11 @@ foreach ($sqlStatements as $statement) {
     if (!empty($statement)) {
         
         if ($conn->query($statement) === TRUE) {
-            // echo "Query ".$n."/14 executed successfully<br>";
+            echo "Query ".$n."/14 executed successfully<br>";
             $n = $n + 1;
         } else {
-            // echo "Error executing query ".$n."/14: " . $conn->error . "\n";
+            echo "Error executing query ".$n."/14: " . $conn->error . "\n";
+            exit();
         }
     }
 }
