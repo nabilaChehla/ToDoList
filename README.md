@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This to-do list project is a web interface developed as part of our university module project (PWEB) under the guidance of Professor Mouhoun Said.
+This To-Do list project is a web interface developed as part of our university module project (PWEB) under the guidance of Professor Mouhoun Said.
 
 The project offers multiple functionalities, including secure password login, creation of personal tasks and projects, and task categorization.
 
