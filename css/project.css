@@ -274,3 +274,27 @@ label{
     border-top: 2px solid #000;
     padding-top: 10px;
 }
+
+a {
+    margin: 10px 0;
+    color: #000000;
+    text-decoration: none;
+    padding-right: 40px;
+    padding: 10px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+.nav-list div{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-list div img{
+    width:80px;
+    padding-right: 13px;
+}

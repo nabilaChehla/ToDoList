@@ -172,10 +172,15 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
+<header>
         <nav class="nav-list">
-            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
-            <li class='current-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
+            <div>
+                <img src="./images/icons8-profile-picture-96.png">
+                <h2 class="header-title"><?php echo $_SESSION['username']; ?></h2>
+
+            </div>
+            <li class='nav-link'><a href="task.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
             <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
             <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
         </nav>
@@ -245,7 +250,7 @@ $conn->close();
                                                 <input type="hidden" name="update_task" value="1">
                                             </form>
                                         <?php else: ?>
-                                            <input type="checkbox" disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
+                                            <input type="checkbox" class='checkbox-custom' disabled <?php echo $task['CHECKED'] ? 'checked' : ''; ?>>
                                         <?php endif; ?>
                                     
                                 </li>

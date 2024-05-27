@@ -45,9 +45,14 @@ if (isset($_SESSION['userid'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
+<header>
         <nav class="nav-list">
-            <li class='nav-link'><a href="index.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
+            <div>
+                <img src="./images/icons8-profile-picture-96.png">
+                <h2 class="header-title"><?php echo $_SESSION['username']; ?></h2>
+
+            </div>
+            <li class='nav-link'><a href="task.php">Tasks</a> <img src='./images/icons8-to-do-48.png'></li>   
             <li class='nav-link'><a href="projects.php">Projects</a><img src='./images/icons8-project-64.png'></li>    
             <li class='nav-link'><a href="category.php">Category</a><img src='./images/icons8-category-48.png'></li>    
             <li class='nav-link'><a href="login.php">Change User</a><img src='./images/icons8-user-48.png'></li>   
@@ -69,11 +74,11 @@ if (isset($_SESSION['userid'])) {
                     $tasks_result = $conn->query($tasks_sql);
                     while ($task_row = $tasks_result->fetch_assoc()) {
                         echo "<li class='task-item'>";
-                        if ($task_row['checked'] == 1) {
-                            echo "<input type='checkbox' checked disabled> <del>" . $task_row['title'] . "</del>";
-                        } else {
-                            echo "<input type='checkbox' disabled> " . $task_row['title'];
-                        }
+                        echo "<label><del>".$task_row['title']."</del></label>";
+
+                            echo "<input class='checkbox-custom' type='checkbox' checked disabled> "  ;
+
+
                         echo "</li>";
                     }
                     echo "</ul>";

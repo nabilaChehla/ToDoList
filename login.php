@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['userid'] = $row["id"];
             $_SESSION['username'] = $username;
             $conn->close();
-            header("Location: index.php");
+            header("Location: task.php");
             exit();
         } else {
             $msg2 = "Incorrect password";
