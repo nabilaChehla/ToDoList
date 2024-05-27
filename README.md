@@ -35,6 +35,6 @@ Open your web browser and navigate to http://localhost/ToDoList/login.php
 XAMPP
 
 # Team (Code Girls)
-Fekir Nabila Chehla
-Bourou Melissa
-Lemdani Hiba
+. Fekir Nabila Chehla
+. Bourou Melissa
+. Lemdani Hiba
