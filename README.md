@@ -14,15 +14,12 @@ The TO-DOIT App is a web-based application designed to streamline task and proje
 To get started with the TO-DOIT App, follow these steps:
 
 1. **Clone the repository:**
-   
-   git clone https://github.com/your-username/to-doit-app.git
+     git clone https://github.com/your-username/ToDoList.git
 
-2. Navigate to the project directory:
-   
+3. Navigate to the project directory:
 cd ToDoList
 
 3. Set up your environment:
-
 Ensure you have XAMPP installed.
 Start Apache and MySQL from the XAMPP control panel.
 Place the project files in the htdocs directory of your XAMPP installation.
@@ -32,7 +29,6 @@ Create a new database called task_db.
 Import the provided SQL file (tables.sql) into the todoit database.
 
 4. Access the application:
-
 Open your web browser and navigate to http://localhost/ToDoList/login.php
 
 # Dependencies
