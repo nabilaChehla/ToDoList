@@ -1,4 +1,4 @@
-# TO-DOIT App
+# DO-IT App
 
 ## Introduction
 This to-do list project is a web interface developed as part of our university module project (PWEB) under the guidance of Professor Mouhoun Said.
@@ -34,7 +34,7 @@ Open your web browser and navigate to http://localhost/ToDoList/login.php
 # Dependencies
 XAMPP
 
-# Team
+# Team (Code Girls)
 Fekir Nabila Chehla
 Bourou Melissa
 Lemdani Hiba
