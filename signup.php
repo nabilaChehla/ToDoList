@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['userid'] = $user_id;
                 $_SESSION['username'] = $username;
 
-                header("Location: login.php");
+                header("Location: index.php");
                 exit();
             } else {
                 echo "Error: " . $stmt->error; // Output error message
