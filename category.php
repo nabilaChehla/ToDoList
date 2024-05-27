@@ -7,6 +7,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $user_id = $_SESSION['userid'];
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['new_category']) && !empty($_POST['category_name'])) {
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("si", $category_name, $user_id);
         $stmt->execute();
         $stmt->close();
-        echo "New category created successfully.<br>";
+        $message = "New category created successfully.";
     }
 
     if (isset($_POST['add_task']) && !empty($_POST['task_title']) && !empty($_POST['category_id'])) {
@@ -36,8 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("iii", $user_id, $category_id, $task_id);
         $stmt->execute();
         $stmt->close();
-
-        echo "Task added to category successfully.<br>";
+        $message = "Task added to category successfully.";
     }
 
     if (isset($_POST['toggle_task']) && isset($_POST['task_id'])) {
@@ -66,11 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
         $stmt->close();
     }
+
+    // Redirect to avoid form resubmission
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
 }
 
 // Fetch existing categories for the current user, ordered by creation date
 $categories_result = $conn->query("
-    SELECT c.id, c.cat_name
+    SELECT c.id, c.cat_name, c.created_at
     FROM category c
     LEFT JOIN user_category_task uct ON c.id = uct.cat_id
     LEFT JOIN todos t ON uct.task_id = t.id AND t.checked = 0
@@ -110,20 +114,26 @@ $conn->close();
             font-size: 1.2em;
             margin-bottom: 10px;
         }
+        .date-separator {
+            font-weight: bold;
+            margin-top: 20px;
+            border-top: 2px solid #000;
+            padding-top: 10px;
+        }
     </style>
     <nav class="nav-list">
         <button class="home-btn"><a href="index.php">tasks</a></button>
         <button class="home-btn"><a href="projects.php">projects</a></button>
-        <button><a href="completed_projects.php">Completed Projects</a></button>
-        <button><a href="login.php">Change User</a></button>
-        <button><a href="completed_tasks.php">Completed Tasks</a></button>
         <button><a href="category.php">category</a></button>
-        <button><a href="profile.php">profile</a></button>
-        <button><a href="completedCategories.php">completedCategories</a></button>
+        <button><a href="login.php">Change User</a></button>
     </nav>
 </head>
 <body>
     <h1>Manage Categories and Tasks</h1>
+
+    <?php if ($message): ?>
+        <p><?php echo $message; ?></p>
+    <?php endif; ?>
 
     <h2>Create a New Category</h2>
     <form method="POST" action="">
@@ -139,9 +149,23 @@ $conn->close();
         $categories[$row['category_id']]['tasks'][] = $row;
     }
 
+    $current_date = '';
     while ($category = $categories_result->fetch_assoc()) {
         $category_id = $category['id'];
         $cat_name = $category['cat_name'];
+        $created_at = $category['created_at'];
+
+        $category_date = date('Y-m-d', strtotime($created_at));
+        $display_date = (date('Y-m-d') == $category_date) ? 'Today' : date('F j, Y', strtotime($created_at));
+
+        if ($current_date !== $display_date) {
+            if ($current_date !== '') {
+                echo "<div class='date-separator'></div>";
+            }
+            echo "<div class='date-separator'>$display_date</div>";
+            $current_date = $display_date;
+        }
+
         echo "<div class='category-container'>";
         echo "<div class='category-title'>" . htmlspecialchars($cat_name) . "</div>";
 
@@ -183,5 +207,6 @@ $conn->close();
         echo "</div>";
     }
     ?>
+    <a href="completedCategories.php">SEE COMPLETED Categories</a>
 </body>
 </html>

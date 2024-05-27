@@ -169,17 +169,17 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Project and Tasks</title>
-    <link rel="stylesheet" href="./css/project.css">
+  <!--  <link rel="stylesheet" href="./css/project.css"> -->
 
 </head>
 <body>
         <header class="light-header">
-            <nav class="nav-list">
-                <button class="home-btn"><a href="index.php">Projects</a></button>
-                <button><a href="completed_projects.php">Completed Projects</a></button>
+        <nav class="nav-list">
+                <button class="home-btn"><a href="index.php">tasks</a></button>
+                <button class="home-btn"><a href="projects.php">projects</a></button>
+                <button><a href="category.php">category</a></button>
                 <button><a href="login.php">Change User</a></button>
-                <button><a href="completed_tasks.php">Completed Tasks</a></button>
-                <button>Statistiques</button>
+
             </nav>
            
         </header>
@@ -261,5 +261,6 @@ $conn->close();
     <?php else: ?>
         <p>No projects found.</p>
     <?php endif; ?>
+    <a href="completed_projects.php">SEE COMPLETED PROJECTS</a>
 </body>
 </html>

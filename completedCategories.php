@@ -78,14 +78,12 @@ if (isset($_SESSION['userid'])) {
     }
 </style>
 <nav class="nav-list">
-    <button class="home-btn"><a href="index.php">tasks</a></button>
-    <button class="home-btn"><a href="projects.php">projects</a></button>
-    <button><a href="completed_projects.php">Completed Projects</a></button>
-    <button><a href="login.php">Change User</a></button>
-    <button><a href="completed_tasks.php">Completed Tasks</a></button>
-    <button><a href="category.php">category</a></button>
-    <button><a href="profile.php">profile</a></button>
-</nav>
+                <button class="home-btn"><a href="index.php">tasks</a></button>
+                <button class="home-btn"><a href="projects.php">projects</a></button>
+                <button><a href="category.php">category</a></button>
+                <button><a href="login.php">Change User</a></button>
+
+            </nav>
 </head>
 <body>
     <h1>Completed categories</h1>

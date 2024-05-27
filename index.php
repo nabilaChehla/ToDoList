@@ -26,16 +26,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
         $stmt->close();
 
-        echo "Task added successfully.<br>";
+        // Redirect to prevent form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 
     if (isset($_POST['toggle_task']) && isset($_POST['task_id'])) {
         // Toggle task completion status
         $task_id = intval($_POST['task_id']);
-        $stmt = $conn->prepare("UPDATE todos SET checked = NOT checked WHERE id = ?");
+        
+        // Fetch current checked status
+        $stmt = $conn->prepare("SELECT checked FROM todos WHERE id = ?");
         $stmt->bind_param("i", $task_id);
         $stmt->execute();
+        $stmt->bind_result($checked);
+        $stmt->fetch();
         $stmt->close();
+        
+        // Toggle the checked status
+        $new_checked_status = $checked ? 0 : 1;
+
+        $stmt = $conn->prepare("UPDATE todos SET checked = ? WHERE id = ?");
+        $stmt->bind_param("ii", $new_checked_status, $task_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Redirect to prevent form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 
     if (isset($_POST['delete_task']) && isset($_POST['task_id'])) {
@@ -45,16 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("i", $task_id);
         $stmt->execute();
         $stmt->close();
+
+        // Redirect to prevent form resubmission
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 }
 
+// Retrieve the undone tasks for the logged-in user that are not part of any project or category
 $tasks_result = $conn->query("SELECT t.id, t.title, t.checked, DATE(t.date_time) AS task_date
                              FROM todos t
                              JOIN user_task ut ON t.id = ut.task_id
                              WHERE ut.user_id = $user_id
+                             AND t.checked = 0
                              AND t.id NOT IN (SELECT task_id FROM user_category_task)
                              AND t.id NOT IN (SELECT task_id FROM project_user_task)
-                             ORDER BY t.date_time DESC"); // Ordering by date_time
+                             ORDER BY t.date_time DESC");
 
 $conn->close();
 ?>
@@ -76,15 +100,13 @@ $conn->close();
     </style>
 </head>
 <body>
-    <nav class="nav-list">
-        <button class="home-btn"><a href="index.php">tasks</a></button>
-        <button class="home-btn"><a href="projects.php">projects</a></button>
-        <button><a href="completed_projects.php">Completed Projects</a></button>
-        <button><a href="login.php">Change User</a></button>
-        <button><a href="completed_tasks.php">Completed Tasks</a></button>
-        <button><a href="category.php">category</a></button>
-        <button><a href="profile.php">profile</a></button>
-    </nav>
+<nav class="nav-list">
+                <button class="home-btn"><a href="index.php">tasks</a></button>
+                <button class="home-btn"><a href="projects.php">projects</a></button>
+                <button><a href="category.php">category</a></button>
+                <button><a href="login.php">Change User</a></button>
+
+            </nav>
 
     <h1>Manage Your Tasks</h1>
 
@@ -116,12 +138,11 @@ $conn->close();
         // Display task
         $task_id = $task['id'];
         $task_title = htmlspecialchars($task['title']);
-        $checked = $task['checked'] ? 'checked' : '';
         $task_completed_class = $task['checked'] ? 'task-completed' : '';
         echo "<div class='task-container'>";
         echo "<form method='POST' action='' style='display:inline;'>";
         echo "<input type='hidden' name='task_id' value='$task_id'>";
-        echo "<input type='checkbox' name='toggle_task' onchange='this.form.submit()' $checked>";
+        echo "<input type='checkbox' name='toggle_task' onchange='this.form.submit()'>";
         echo "<span class='$task_completed_class'>$task_title</span>";
         echo "</form>";
         echo "<form method='POST' action='' style='display:inline;'>";
@@ -131,5 +152,7 @@ $conn->close();
         echo "</div>";
     }
     ?>
+        <a href="completed_tasks.php">SEE COMPLETED PROJECTS</a>
+
 </body>
 </html>

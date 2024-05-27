@@ -51,6 +51,17 @@ if ($stmt = $conn->prepare($sql)) {
 }
 
 $conn->close();
+
+function formatDate($date) {
+    $today = new DateTime();
+    $taskDate = new DateTime($date);
+    if ($today->format('Y-m-d') === $taskDate->format('Y-m-d')) {
+        return "Today";
+    }
+    return $taskDate->format('F j, Y');
+}
+
+$lastDate = null;
 ?>
 
 <!DOCTYPE html>
@@ -60,31 +71,37 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Completed Tasks</title>
     <link rel="stylesheet" href="./css/complited.css">
-
 </head>
 <body>
 <header class="light-header">
 <nav class="nav-list">
                 <button class="home-btn"><a href="index.php">tasks</a></button>
                 <button class="home-btn"><a href="projects.php">projects</a></button>
-                <button><a href="completed_projects.php">Completed Projects</a></button>
-                <button><a href="login.php">Change User</a></button>
-                <button><a href="completed_tasks.php">Completed Tasks</a></button>
                 <button><a href="category.php">category</a></button>
-                <button><a href="profile.php">profile</a></button>
+                <button><a href="login.php">Change User</a></button>
+
             </nav>
-           
-        </header>
-    <h1>Your Completed Tasks</h1>
-    <?php foreach ($tasks as $task): ?>
-        <div class="task-container">
-            <p class="strikethrough"><strong>Title:</strong> <?= htmlspecialchars($task['TITLE']); ?></p>
-            <p class="strikethrough"><strong>Date:</strong> <?= htmlspecialchars($task['DATE_TIME']); ?></p>
-            <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>">
-                <input type="hidden" name="task_id" value="<?= $task['ID']; ?>">
-                <button type="submit">Delete</button>
-            </form>
-        </div>
-    <?php endforeach; ?>
+</header>
+<h1>Your Completed Tasks</h1>
+<?php foreach ($tasks as $task): ?>
+    <?php
+    $currentDate = formatDate($task['DATE_TIME']);
+    if ($currentDate !== $lastDate) {
+        if ($lastDate !== null) {
+            echo "<hr>";
+        }
+        echo "<h2>{$currentDate}</h2>";
+        $lastDate = $currentDate;
+    }
+    ?>
+    <div class="task-container">
+        <p class="strikethrough"><strong>Title:</strong> <?= htmlspecialchars($task['TITLE']); ?></p>
+        <p class="strikethrough"><strong>Date:</strong> <?= htmlspecialchars($task['DATE_TIME']); ?></p>
+        <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>">
+            <input type="hidden" name="task_id" value="<?= $task['ID']; ?>">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+<?php endforeach; ?>
 </body>
 </html>
